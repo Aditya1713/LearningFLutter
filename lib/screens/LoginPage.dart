@@ -2,8 +2,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
+import 'package:untitled/screens/PojoClass.dart';
 import 'package:untitled/utils/routes.dart';
 import 'package:country_list_pick/country_list_pick.dart';
+import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_core/firebase_core.dart';
 class LoginPage extends StatefulWidget{
 
   @override
@@ -13,24 +17,59 @@ class LoginPage extends StatefulWidget{
 class _LoginPageState extends State<LoginPage> {
   String name = "";
   bool changeButton = false;
-
+  late List<MyPojoClass> list;
+  late DatabaseReference ref;
+  late MyPojoClass userData;
+  late String uemail;
+  late String upass;
   final _formKey = GlobalKey<FormState>();
 
   moveToHome(BuildContext context) async {
     if (_formKey.currentState!.validate()) {
       setState(() {
         changeButton = true;
+        DatabaseReference reference =
+        FirebaseDatabase.instance.ref('User/').orderByChild("email").ref;
+
+        final commentsRef = FirebaseDatabase.instance.ref("User/");
+        commentsRef.onChildAdded.listen((event) {
+
+          // A new comment has been added, so add it to the displayed list.
+          print(event.snapshot.child("email").value);
+          if(event.snapshot.child("email").value==uemail && event.snapshot.child("password").value==upass){
+            Navigator.pushNamed(context, MyRoutes.exploreRoute);
+            setState(() {
+              changeButton = false;
+            });
+          }
+          
+        });
+        reference.onValue.listen((event) {
+          for (final child in event.snapshot.children) {
+            // Handle the post.
+           if(child.child("email")==uemail && child.child("password")==upass){
+              Future.delayed(Duration(seconds: 1));
+              Navigator.pushNamed(context, MyRoutes.exploreRoute);
+             setState(() {
+               changeButton = false;
+             });
+           }
+          }
+        }, onError: (error) {
+          // Error.
+          print("invalid pass");
+        });
+
       });
-      await Future.delayed(Duration(seconds: 1));
-       await Navigator.pushNamed(context, MyRoutes.exploreRoute);
-      setState(() {
-        changeButton = false;
-      });
+
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+        statusBarBrightness: Brightness.dark,
+        statusBarColor: Colors.transparent));
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Material(
@@ -98,7 +137,7 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     Container(
                       alignment: Alignment.centerLeft,
-                      margin: EdgeInsets.fromLTRB(60.0,100, 20,0 ),
+                      margin: EdgeInsets.fromLTRB(50.0,80, 20,0 ),
                       child: Text(
                         "Q-Box",
                         style: TextStyle(
@@ -113,7 +152,7 @@ class _LoginPageState extends State<LoginPage> {
                         child: Column(
                           children: [
                             SizedBox(
-                              height: 20.0,
+                              height: 10.0,
                             ),
                             SizedBox(
                               height: 20.0,
@@ -123,56 +162,67 @@ class _LoginPageState extends State<LoginPage> {
                                   vertical: 16.0, horizontal: 32.0),
                               child: Column(
                                 children: [
-                                  TextFormField(
+                                  Container(
+                                    width: 450 ,
+                                    height: 70,
+                                    child: TextFormField(
 
-                                    decoration: InputDecoration(
-                                      hintText: "Enter email id",
-                                      labelText: "Email id",
-                                      enabledBorder:  OutlineInputBorder(
-                                        borderSide:  BorderSide(color: Colors.grey, width: 2.0),
-                                          borderRadius: BorderRadius.circular(10)
+                                      decoration: InputDecoration(
+                                        hintText: "Enter email id",
+                                        labelText: "Email id",
+                                        enabledBorder:  OutlineInputBorder(
+                                          borderSide: const BorderSide(color: Colors.grey, width: 2.0,style:
+                                          BorderStyle.solid),
+                                            borderRadius: BorderRadius.circular(10)
+                                        ),
+                                        border: OutlineInputBorder(),
                                       ),
-                                      border: OutlineInputBorder(),
-                                    ),
-                                    validator: (value) {
-                                      if (value!.isEmpty) {
-                                        return "Email cannot be empty";
-                                      }
+                                      validator: (value) {
+                                        if (value!.isEmpty) {
+                                          return "Email cannot be empty";
+                                        }
+                                        else{
+                                          uemail =value.trim();
+                                        }
 
-                                      return null;
-                                    },
-                                    onChanged: (value) {
-                                      name = value;
-                                      setState(() {});
-                                    },
+                                      },
+                                      onChanged: (value) {
+                                        name = value;
+                                        setState(() {});
+                                      },
+                                    ),
                                   ),
                                   SizedBox(
                                     height: 10,
                                   ),
-                                  TextFormField(
+                                  Container(
+                                    width: 450 ,
+                                    height: 70,
+                                    child: TextFormField(
 
-                                    obscureText: true,
-                                    decoration: InputDecoration(
-                                      hintText: "Enter password",
-                                      labelText: "Password",
-                                      enabledBorder:  OutlineInputBorder(
-                                        borderSide:  BorderSide(color: Colors.grey, width: 2.0),
-                                        borderRadius: BorderRadius.circular(10)
+                                      obscureText: true,
+                                      decoration: InputDecoration(
+                                        hintText: "Enter password",
+                                        labelText: "Password",
+                                        enabledBorder:  OutlineInputBorder(
+                                          borderSide:  BorderSide(color: Colors.grey, width: 2.0),
+                                          borderRadius: BorderRadius.circular(10)
+                                        ),
+                                        border: OutlineInputBorder(),
                                       ),
-                                      border: OutlineInputBorder(),
-                                    ),
 
-                                    validator: (value) {
-                                      if (value!.isEmpty) {
-                                        return "Password cannot be empty";
-                                      } else if (value.length < 6) {
-                                        return "Password length should be atleast 6";
-                                      }
-                                      return null;
-                                    },
+                                      validator: (value) {
+                                        if (value!.isEmpty) {
+                                          return "Password cannot be empty";
+                                        } else  {
+                                          upass =value.trim();
+                                        }
+
+                                      },
+                                    ),
                                   ),
                                   SizedBox(
-                                    height: 40.0,
+                                    height: 30.0,
                                   ),
                                   Material(
                                     color: Colors.yellow,
@@ -181,11 +231,11 @@ class _LoginPageState extends State<LoginPage> {
                                       onTap: () => moveToHome(context),
                                       child: AnimatedContainer(
                                         duration: Duration(seconds: 1),
-                                        width:  150,
+                                        width:  450,
                                         height: 50,
                                         alignment: Alignment.center,
-                                        child: changeButton ? Icon(Icons.done, color: Colors.white,)
-                                           : Text(
+                                        child:
+                                            Text(
                                           "Login",
                                           style: TextStyle(
                                               color: Colors.black,
@@ -211,9 +261,9 @@ class _LoginPageState extends State<LoginPage> {
                                     children: [
                                       Container(
                                         alignment: Alignment.center,
-                                        padding: EdgeInsets.fromLTRB(40, 60, 0, 0),
+                                        padding: EdgeInsets.fromLTRB(60, 60, 0, 0),
                                         child: Material(
-                                            child : Text("Not registered yet?"),
+                                            child : Center(child: Text("Not registered yet?")),
                                         ),
                                       ),
                                       Container(

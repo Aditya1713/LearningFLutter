@@ -16,6 +16,7 @@ class _ExplorePageState extends State<ExplorePage> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       color: Colors.white,
     home: Container(
       decoration: BoxDecoration(

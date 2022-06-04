@@ -22,9 +22,9 @@ class _HomePageState extends State<HomePage> {
     body: Column(
       children: [
         Container(
-          color: Colors.grey[100],
+          color: Colors.grey[300],
           alignment: Alignment.topCenter,
-          margin: EdgeInsets.fromLTRB(10, 50, 10, 10),
+          margin: EdgeInsets.fromLTRB(0, 50, 0, 10),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
@@ -38,11 +38,13 @@ class _HomePageState extends State<HomePage> {
                     IconButton(onPressed: (){}, icon: Icon(Icons.cast,),alignment: Alignment.centerRight,),
                     IconButton(onPressed: (){}, icon: Icon(Icons.notifications),alignment: Alignment.centerRight,),
                     IconButton(onPressed: (){}, icon: Icon(Icons.search),alignment: Alignment.centerRight,),
+                    IconButton(onPressed: (){
+
+                    }, icon: Icon(Icons.account_circle),alignment: Alignment.centerRight,),
                   ],
                 ),
               ),
-             Icon(Icons.account_circle,size: 23,
-             ),
+
             ],
           ),
         ),
@@ -55,19 +57,19 @@ class _HomePageState extends State<HomePage> {
 
               Container(
                 padding: EdgeInsets.all(3),
-                decoration: BoxDecoration(borderRadius: BorderRadius.circular(8),color: Colors.grey[100]),
+                decoration: BoxDecoration(borderRadius: BorderRadius.circular(8),color: Colors.grey[200]),
                   child: Text("Select Course"),
               ),
               Container(
                   padding: EdgeInsets.all(3),decoration: BoxDecoration(borderRadius: BorderRadius.circular(8),
-                  color: Colors.grey[100]),child: Text("Live Classes")),
+                  color: Colors.grey[200]),child: Text("Live Classes")),
               Container( padding: EdgeInsets.all(3),
                   decoration: BoxDecoration(borderRadius: BorderRadius.circular(8),
-                  color: Colors.grey[100]),child: Text("Free Classes")),
+                  color: Colors.grey[200]),child: Text("Free Classes")),
               Container(  padding: EdgeInsets.all(3),
                   decoration: BoxDecoration(borderRadius: BorderRadius.circular(8),
 
-                  color: Colors.grey[100]),child: Text("Did you know?")),
+                  color: Colors.grey[200]),child: Text("Did you know?")),
 
             ],
         ),
@@ -142,12 +144,12 @@ class _HomePageState extends State<HomePage> {
       ],
     ),
       bottomNavigationBar: Container(
+
         height: 60,
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Colors.grey[300],
           borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(20),
-            topRight: Radius.circular(20),
+
           ),
         ),
         child: Row(
@@ -155,6 +157,7 @@ class _HomePageState extends State<HomePage> {
           children: [
             IconButton(
               enableFeedback: false,
+
               onPressed: () {
                 Fluttertoast.showToast(
                     msg: "This feature will be added",
